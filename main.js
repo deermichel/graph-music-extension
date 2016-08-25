@@ -4,7 +4,7 @@ module.exports = (args) => {
 }
 
 // display info
-tell("Music Extension is loaded. Enter 'play()' to let it ring.");
+tell("Music Extension is loaded. Move some dots and enter 'play()' to let it ring.");
 
 // vars
 var Tone = require("./tone.js");
@@ -30,20 +30,8 @@ module.exports.play = () => {
   return "done";
 }
 
+// drag listener (TODO: include new dots)
 foralldots(function (dot) {
-
-  // dot.SnapCircle.mousedown(function() {
-  //   previewNote = toNote(dot.Position.Y);
-  //   synth.triggerAttackRelease(previewNote, "8n");
-  // });
-  //
-  // dot.SnapCircle.mousemove(function() {
-  //   console.log(dot.Position.Y);
-  //   if (toNote(dot.Position.Y) != previewNote) {
-  //     previewNote = toNote(dot.Position.Y);
-  //     synth.triggerAttackRelease(previewNote, "8n");
-  //   }
-  // });
 
   dot.SnapCircle.drag(function() { // move
 
@@ -88,6 +76,24 @@ function tell(what) {
 
 }
 
+
+// init extension
+
+// customize ribbon bar
+var ribbonBar = document.getElementById("graph-and-ribbon-half").getElementsByClassName("ribbon unselectable")[0];
+var separator = document.createElement("div");
+separator.className = "ribbon-separator";
+var playIcon = document.createElement("div");
+playIcon.className = "ribbon-icon";
+playIcon.innerHTML = "Play";
+playIcon.style.backgroundImage = "url('" + path.join(__dirname, "playicon.png") + "')";
+ribbonBar.insertBefore(playIcon, ribbonBar.children[ribbonBar.children.length - 1]);
+ribbonBar.insertBefore(separator, playIcon);
+
+// play click listener
+playIcon.addEventListener("click", function() {
+  play();
+});
 
 // inject commands.js
 script = document.createElement("script");
