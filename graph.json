@@ -3,6 +3,6 @@
   "handle": "de.mh.graph.algorithms.music",
   "author": "Micha Hanselmann",
   "email": "m@karyfoundation.org",
-  "main": "init.js",
+  "main": "main.js",
   "description": "Let the music play..."
 }
