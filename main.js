@@ -30,27 +30,36 @@ module.exports.play = () => {
   return "done";
 }
 
-// drag listener (TODO: include new dots)
-foralldots(function (dot) {
+// drag listener
+function updateDragListeners() {
 
-  dot.SnapCircle.drag(function() { // move
+  foralldots(function (dot) {
 
-    if (!(toNote(dot.Position.Y) == previewNote && toVelocity(dot.Position.X) == previewVelocity)) {
-      console.log(previewVelocity);
-      previewNote = toNote(dot.Position.Y);
-      previewVelocity = toVelocity(dot.Position.X);
-      synth.triggerAttackRelease(previewNote, "8n", "+0", previewVelocity);
+    if (dot.SnapCircle.events.length < 2) {
+
+      dot.SnapCircle.drag(function() { // move
+
+        if (!(toNote(dot.Position.Y) == previewNote && toVelocity(dot.Position.X) == previewVelocity)) {
+          previewNote = toNote(dot.Position.Y);
+          previewVelocity = toVelocity(dot.Position.X);
+          synth.triggerAttackRelease(previewNote, "8n", "+0", previewVelocity);
+        }
+
+      }, function() { // start
+
+        previewNote = toNote(dot.Position.Y);
+        previewVelocity = toVelocity(dot.Position.X);
+        synth.triggerAttackRelease(previewNote, "8n", "+0", previewVelocity);
+
+      });
+
     }
-
-  }, function() { // start
-
-    previewNote = toNote(dot.Position.Y);
-    previewVelocity = toVelocity(dot.Position.X);
-    synth.triggerAttackRelease(previewNote, "8n", "+0", previewVelocity);
 
   });
 
-});
+  setTimeout(updateDragListeners, 500);
+}
+updateDragListeners();
 
 
 // helper funcs
