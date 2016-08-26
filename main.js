@@ -9,10 +9,11 @@ tell("Music Extension is loaded. Move some dots and enter 'play()' to let it rin
 // vars
 var Tone = require("./tone.js");
 var synth = new Tone.Synth().toMaster();
-var resolution = 24;
+var noteResolution = 24;
+var velocityResolution = 25;
 var rootNote = "C3";
-var tempo = 120;
 var previewNote = "";
+var previewVelocity = 0;
 
 
 // play
@@ -21,9 +22,8 @@ module.exports.play = () => {
   foralldots(function (dot) {
 
       var note = toNote(dot.Position.Y);
-      setTimeout(function() {
-        synth.triggerAttackRelease(note, "8n");
-      }, dot.NumberId * (60000 / tempo));
+      var velocity = toVelocity(dot.Position.X);
+      synth.triggerAttackRelease(note, "8n", "+4n *" + dot.NumberId, velocity);
 
   });
 
@@ -35,15 +35,18 @@ foralldots(function (dot) {
 
   dot.SnapCircle.drag(function() { // move
 
-    if (toNote(dot.Position.Y) != previewNote) {
+    if (!(toNote(dot.Position.Y) == previewNote && toVelocity(dot.Position.X) == previewVelocity)) {
+      console.log(previewVelocity);
       previewNote = toNote(dot.Position.Y);
-      synth.triggerAttackRelease(previewNote, "8n");
+      previewVelocity = toVelocity(dot.Position.X);
+      synth.triggerAttackRelease(previewNote, "8n", "+0", previewVelocity);
     }
 
   }, function() { // start
 
     previewNote = toNote(dot.Position.Y);
-    synth.triggerAttackRelease(previewNote, "8n");
+    previewVelocity = toVelocity(dot.Position.X);
+    synth.triggerAttackRelease(previewNote, "8n", "+0", previewVelocity);
 
   });
 
@@ -56,11 +59,21 @@ foralldots(function (dot) {
 function toNote(y) {
 
   var offsetY = height() - y;
-  var value = Math.round(offsetY / (height() / resolution));
+  var value = Math.round(offsetY / (height() / noteResolution));
   if (value < 0) value = 0;
-  if (value >= resolution) value = resolution;
+  if (value >= noteResolution) value = noteResolution;
 
   return Tone.Frequency(rootNote).transpose(value).toNote();
+}
+
+// convert x value to velocity
+function toVelocity(x) {
+
+  var value = Math.round(x / (width() / velocityResolution));
+  if (value < 0) value = 0;
+  if (value >= velocityResolution) value = velocityResolution;
+
+  return value / velocityResolution;
 }
 
 // let the world know
