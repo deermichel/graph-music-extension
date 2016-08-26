@@ -19,13 +19,17 @@ var previewVelocity = 0;
 // play
 module.exports.play = () => {
 
-  foralldots(function (dot) {
+  var queue = all();
 
-      var note = toNote(dot.Position.Y);
-      var velocity = toVelocity(dot.Position.X);
-      synth.triggerAttackRelease(note, "8n", "+4n *" + dot.NumberId, velocity);
+  while (queue.length > 0) {
 
-  });
+    var dot = getdot(queue.shift());
+    if (dot.GetDegree() == 0) continue;
+    var note = toNote(dot.Position.Y);
+    var velocity = toVelocity(dot.Position.X);
+    synth.triggerAttackRelease(note, "8n", "+4n *" + dot.NumberId, velocity);
+
+  }
 
   return "done";
 }
